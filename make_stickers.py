@@ -5,28 +5,32 @@ from wand.drawing import Drawing
 from wand.image import Image
 
 from barcode import EAN13
-from barcode.writer import  ImageWriter
+from barcode.writer import ImageWriter
+
+from PyPDF2 import PdfFileReader
 
 import os
 import datetime
 
 dm = "dmcode.png"
 
-def generateSticker( model, size, gtin, serial, dmC ):
+
+def generateSticker(model, size, gtin, serial, dmC):
     lim = 1.7
     w = round( dmC.width * lim )
     h = round( dmC.height * lim )
-    print( "%s %s %s %s"%( model, size, gtin, serial ) )
+    print( "%s %s %s %s" % ( model, size, gtin, serial ) )
 #    os.system( 'zint --height 20 -o ean.png -b 13 -d "%s"'%( gtin[5:17] ) )
     print(gtin)
     print( gtin[5:18] )
     with open( 'ean.png', 'wb' ) as f:
-            EAN13( '%s'%(gtin[5:18]), writer = ImageWriter() ).write( f )
+        EAN13( '%s' % (gtin[5:18]), writer = ImageWriter() ).write( f )
     dmCode = dmC.clone()
     dmCode.sample( w, h )
     img = Image( filename = "./maket.png" ).clone()
     draw = Drawing()
-    draw.composite( operator = "over", left = 600, top = 70, width = dmCode.width,  height = dmCode.height, image = dmCode )
+    draw.composite( operator = "over", left = 600, top = 70, width = dmCode.width,
+                    height = dmCode.height, image = dmCode )
     
     w = round( len( model ) * 65 / 2 ) 
     
@@ -37,31 +41,39 @@ def generateSticker( model, size, gtin, serial, dmC ):
     draw.font_size = 70
     
     ean = Image( filename = "./ean.png", resolution = 300 ).clone()
-    draw.composite( operator = "over", left = 24, top = 638,  width = round( ean.width * 1  ), height = round( ean.height * 0.65  ), image = ean )
-
-    
+    draw.composite( operator = "over", left = 24, top = 638,
+                    width = round( ean.width * 1  ), height = round( ean.height * 0.65  ),
+                    image = ean )
 #    draw.text( 50, 750, gtin[4 : 18] )
-    
-    
     draw.font_size = 50
     draw.text( 580, 630, gtin )
     draw.text( 680, 720, serial )
    
     draw( img )
     now = datetime.datetime.now()
-    name = "./images/m%s_s%s_%s_%s_%s_%s_%s_%s.png"%( model, size,  now.year,  now.month,  now.day, now.hour, now.minute, now.second )
+    name = "./images/m%s_s%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
+                                                        now.month, now.day, now.hour,
+                                                        now.minute, now.second )
     img.save( filename = name )
     dmCode.save( filename = "dout.png" )
     
 # Reading text information
-num = int( input( "Количество->" ) ) 
-print( num )
-name = "./1.pdf"
+# num = int( input( "Количество->" ) )
 
-os.system( 'pdftotext -enc UTF-8 -eol dos %s tmp_pdf.txt'%( name ) )
-#os.system( 'pdf2txt %s > tmp_pdf.txt'%( name ) )
-with open( "tmp_pdf.txt", "rt" ) as f:
-    res = f.readlines()
+# Подсчет количества страниц в PDF файле
+
+
+name = "./flask_tmp.pdf"
+with open(name, 'rb') as f:
+    pdf = PdfFileReader(name)
+    num = pdf.getNumPages()
+
+print( num )
+
+os.system( 'pdftotext -enc UTF-8 -eol dos %s tmp_pdf.txt' % ( name ) )
+# os.system( 'pdf2txt %s > tmp_pdf.txt'%( name ) )
+with open( "tmp_pdf.txt", "rt" ) as f_in:
+    res = f_in.readlines()
 data = []
 for item in res:
     if item != "\n":
@@ -82,7 +94,7 @@ for item in res:
 print( data )
 
 
-i= 0
+i = 0
 all = []
 while i < num:
     item = []
@@ -91,11 +103,6 @@ while i < num:
     all.append( item )
     i = i+1
 print( all )
-
-
-
-
-
 """for line in res:
     if line != "\n":
         if line != "0\n":
@@ -110,8 +117,7 @@ serial = data[2]
 # Reading datamatrix code
 for i in range( num ):
     print( i )
-    tmp = Image( filename = "./1.pdf[%s]"%( i ), resolution = 300 )
+    tmp = Image( filename = "./flask_tmp.pdf[%s]" % ( i ), resolution = 300 )
     tmp.convert( 'png' ) 
     tmp.crop( 310, 10, 630, 290  )
     generateSticker( all[i][0], all[i][1], "(01)" + all[i][2] + "(21)",  all[i][3], tmp )
-
