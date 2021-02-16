@@ -1,8 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.8
 # -*- coding: utf-8 -*-
 
-from wand.drawing import Drawing
-from wand.image import Image
+from pdf2image import convert_from_path, convert_from_bytes
 
 from barcode import EAN13
 from barcode.writer import ImageWriter
@@ -25,9 +24,9 @@ def generateSticker(model, size, gtin, serial, dmC):
     print( gtin[5:18] )
     with open( 'ean.png', 'wb' ) as f:
         EAN13( '%s' % (gtin[5:18]), writer = ImageWriter() ).write( f )
-    dmCode = dmC.clone()
-    dmCode.sample( w, h )
-    img = Image( filename = "./maket.png" ).clone()
+    dmCode = dmC
+    dmCode = dmCode.resize( (w, h) )
+    img = Image( filename = "./maket.png" )
     draw = Drawing()
     draw.composite( operator = "over", left = 600, top = 70, width = dmCode.width,
                     height = dmCode.height, image = dmCode )
@@ -114,10 +113,12 @@ size = data[0][data[0].find( '(' ) + 1 : data[0].find( ')' )]
 gtin = data[1]
 serial = data[2]
 """
+
+images = convert_from_path('.//flask_tmp.pdf', dpi = 300)
 # Reading datamatrix code
 for i in range( num ):
     print( i )
-    tmp = Image( filename = "./flask_tmp.pdf[%s]" % ( i ), resolution = 300 )
-    tmp.convert( 'png' ) 
-    tmp.crop( 310, 10, 630, 290  )
+    tmp = images[i]
+#    tmp.convert( 'png' ) 
+    tmp.crop( (310, 10, 630, 290)  )
     generateSticker( all[i][0], all[i][1], "(01)" + all[i][2] + "(21)",  all[i][3], tmp )
