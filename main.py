@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 
 def transform():
-    os.system("rm -f archive.rar")
+    os.system("rm -f archive.zip")
     os.system("rm -f images/*.png")
     os.system("./make_stickers.py")
-    os.system("rar a archive.rar images/*.png")
+    os.system("zip -r archive.zip images/")
     # return text_file_contents.replace("=", ",")
 
 
@@ -38,7 +38,7 @@ def transform_view():
     # file_contents = file.stream.read().decode("utf-8")
     transform()
 
-    with open("archive.rar","rb") as f_out:
+    with open("archive.zip","rb") as f_out:
         result = f_out.read()
 
     response = make_response(result)

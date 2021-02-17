@@ -67,9 +67,11 @@ def generateSticker(model, size, gtin, serial, dmC):
 #
 #     draw( img )
     now = datetime.datetime.now()
-    name = "./images/m%s_s%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
-                                                        now.month, now.day, now.hour,
-                                                        now.minute, now.second )
+    name = "./images/m%s_s%s_%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
+                                                           now.month, now.day, now.hour,
+                                                           now.minute, now.second,
+                                                           now.microsecond )
+    print(name)
     img.save(name)
     dmCode.save("dout.png")
     
@@ -133,7 +135,7 @@ serial = data[2]
 
 # Reading datamatrix code
 for i in range( num ):
-    print( i )
+    print( i, all[i][3] )
     tmp = convert_from_path('.//flask_tmp.pdf',
                             dpi = 400, first_page = i + 1 , last_page = i + 1)[0]
     tmp = tmp.crop( (420, 15, 800, 395)  )
