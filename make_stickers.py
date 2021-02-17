@@ -45,7 +45,7 @@ def generateSticker(model, size, gtin, serial, dmC):
     d = ImageDraw.Draw( txt )
 
     # draw text, half opacity
-    d.text( (110 + w, 130), model, font = fnt, fill = (0, 0, 0, 255) )
+    d.text( (90 + w, 130), model, font = fnt, fill = (0, 0, 0, 255) )
     # draw text, full opacity
     d.text( (230, 330), size, font = fnt, fill = (0, 0, 0, 255) )
 
