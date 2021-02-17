@@ -135,6 +135,8 @@ serial = data[2]
 
 # Reading datamatrix code
 for i in range( num ):
+    with open('num.txt', 'wt') as f:
+        f.write('%s'%(i))
     print( i, all[i][3] )
     tmp = convert_from_path('.//flask_tmp.pdf',
                             dpi = 400, first_page = i + 1 , last_page = i + 1)[0]

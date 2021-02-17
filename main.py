@@ -11,6 +11,9 @@ work = 0
 def transform():
     with open('status.sts', 'wt') as f:
         f.write('1')
+    with open( 'num.txt', 'wt' ) as f:
+        f.write( '0' )
+
     os.system("rm -f archive.zip")
     os.system("rm -f images/*.png")
     os.system("./make_stickers.py")
@@ -50,17 +53,21 @@ def form():
             </body>
         </html>
     """
-    res_error = """
-        <html>
-            <body>
-                <h1>Извините в данный момент идет обработка</h1>
-            </body>
-        </html>
-    """
+
 
     if work == '0':
         res = res_ok
     elif work == '1':
+        with open('num.txt') as f:
+            num = f.read()
+        res_error = (
+            f"<html>                                                    "
+            f"    <body>                                                "
+            f"        <h1>Извините в данный момент идет обработка</h1>  "
+            f"        <h1>Обработано {num} кодов.</h1>                        "
+            f"    </body>                                               "
+            f"</html>                                                   "
+        )
         res = res_error
     elif work == '2':
         res = res_get
@@ -84,7 +91,8 @@ def transform_view():
         # file_contents = file.stream.read().decode("utf-8")
         thread = Process(target = transform)
         thread.start()
-        response = make_response('OK')
+        response = '<script>document.location.href = document.referrer</script>'
+        #make_response('OK')
 
     elif work == '2':
         with open("archive.zip","rb") as f_out:
