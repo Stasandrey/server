@@ -38,14 +38,14 @@ def generateSticker(model, size, gtin, serial, dmC):
     print( w )
 
     txt = Image.new( "RGBA", img.size, (255, 255, 255, 0) )
-    fnt = ImageFont.truetype( "Pillow/Tests/fonts/FreeMonoBold.ttf", 120 )
+    fnt = ImageFont.truetype( "Pillow/Tests/fonts/FreeMonoBold.ttf", 90 )
     fnt1 = ImageFont.truetype( "Pillow/Tests/fonts/FreeMonoBold.ttf", 45 )
 
     # get a drawing context
     d = ImageDraw.Draw( txt )
 
     # draw text, half opacity
-    d.text( (90 + w, 130), model, font = fnt, fill = (0, 0, 0, 255) )
+    d.text( (100, 130), model, font = fnt, fill = (0, 0, 0, 255) )
     # draw text, full opacity
     d.text( (230, 330), size, font = fnt, fill = (0, 0, 0, 255) )
 
