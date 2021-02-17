@@ -42,7 +42,7 @@ def transform_view():
         result = f_out.read()
 
     response = make_response(result)
-    response.headers["Content-Disposition"] = "attachment; filename=result.csv"
+    response.headers["Content-Disposition"] = "attachment; filename=result.zip"
     return response
 
 
