@@ -2,21 +2,44 @@
 
 import os
 from flask import Flask, make_response, request
+from multiprocessing import Process
 
 app = Flask(__name__)
 
+work = 0
 
 def transform():
+    with open('status.sts', 'wt') as f:
+        f.write('1')
     os.system("rm -f archive.zip")
     os.system("rm -f images/*.png")
     os.system("./make_stickers.py")
     os.system("zip -r archive.zip images/")
     # return text_file_contents.replace("=", ",")
-
+    with open('status.sts', 'wt') as f:
+        f.write('2')
 
 @app.route('/')
 def form():
-    return """
+    if os.path.exists('status.sts'):
+        with open('status.sts', 'rt') as f:
+            work = f.read(1)
+    else:
+        with open('status.sts', 'wt') as f:
+            f.write('0')
+            work = '0'
+    print(work)
+    res_get = """
+            <html>
+                <body>
+                    <h1>Забрать отформатированные этикетки</h1>
+                    <form action="/transform" method="post" enctype="multipart/form-data">
+                        <input type="submit" />
+                    </form>
+                </body>
+            </html>
+        """
+    res_ok =  """
         <html>
             <body>
                 <h1>Преобразование этикеток с кодами маркировки.</h1>
@@ -27,22 +50,52 @@ def form():
             </body>
         </html>
     """
+    res_error = """
+        <html>
+            <body>
+                <h1>Извините в данный момент идет обработка</h1>
+            </body>
+        </html>
+    """
 
+    if work == '0':
+        res = res_ok
+    elif work == '1':
+        res = res_error
+    elif work == '2':
+        res = res_get
+    return res
 
 @app.route('/transform', methods=["POST"])
 def transform_view():
-    file = request.files['data_file']
-    if not file:
-        return "No file"
-    file.save("flask_tmp.pdf")
-    # file_contents = file.stream.read().decode("utf-8")
-    transform()
+    if os.path.exists('status.sts'):
+        with open('status.sts', 'rt') as f:
+            work = f.read(1)
+    else:
+        with open('status.sts', 'wt') as f:
+            f.write('0')
+            work = '3'
+    print(work)
+    if work == '0':
+        file = request.files['data_file']
+        if not file:
+            return "No file"
+        file.save("flask_tmp.pdf")
+        # file_contents = file.stream.read().decode("utf-8")
+        thread = Process(target = transform)
+        thread.start()
+        response = make_response('OK')
 
-    with open("archive.zip","rb") as f_out:
-        result = f_out.read()
+    elif work == '2':
+        with open("archive.zip","rb") as f_out:
+            result = f_out.read()
 
-    response = make_response(result)
-    response.headers["Content-Disposition"] = "attachment; filename=result.zip"
+        response = make_response(result)
+        response.headers["Content-Disposition"] = "attachment; filename=result.zip"
+        with open('status.sts', 'wt') as f:
+            f.write('0')
+    if work == '3':
+        response = make_response('OK')
     return response
 
 
