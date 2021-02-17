@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pdf2image import convert_from_path, convert_from_bytes
+from PIL import Image, ImageDraw, ImageFont
 
 from barcode import EAN13
 from barcode.writer import ImageWriter
@@ -15,7 +16,7 @@ dm = "dmcode.png"
 
 
 def generateSticker(model, size, gtin, serial, dmC):
-    lim = 1.7
+    lim = 1.2
     w = round( dmC.width * lim )
     h = round( dmC.height * lim )
     print( "%s %s %s %s" % ( model, size, gtin, serial ) )
@@ -26,35 +27,51 @@ def generateSticker(model, size, gtin, serial, dmC):
         EAN13( '%s' % (gtin[5:18]), writer = ImageWriter() ).write( f )
     dmCode = dmC
     dmCode = dmCode.resize( (w, h) )
-    img = Image( filename = "./maket.png" )
-    draw = Drawing()
-    draw.composite( operator = "over", left = 600, top = 70, width = dmCode.width,
-                    height = dmCode.height, image = dmCode )
-    
-    w = round( len( model ) * 65 / 2 ) 
-    
+    img = Image.open("./maket.png")
+    img.paste( dmCode, box = (600, 70))
+
+    ean = Image.open("./ean.png")
+    ean = ean.crop( (60, 1, 500, 150) )
+    img.paste( ean, box = (95, 645))
+
+    w = round( len( model ) * 30 / 2 )
     print( w )
-    draw.font_size = 110
-    draw.text( 320 - w, 240, model )
-    draw.text( 250, 420, size )
-    draw.font_size = 70
-    
-    ean = Image( filename = "./ean.png", resolution = 300 ).clone()
-    draw.composite( operator = "over", left = 24, top = 638,
-                    width = round( ean.width * 1  ), height = round( ean.height * 0.65  ),
-                    image = ean )
-#    draw.text( 50, 750, gtin[4 : 18] )
-    draw.font_size = 50
-    draw.text( 580, 630, gtin )
-    draw.text( 680, 720, serial )
-   
-    draw( img )
+
+    txt = Image.new( "RGBA", img.size, (255, 255, 255, 0) )
+    fnt = ImageFont.truetype( "Pillow/Tests/fonts/FreeMonoBold.ttf", 120 )
+    fnt1 = ImageFont.truetype( "Pillow/Tests/fonts/FreeMonoBold.ttf", 45 )
+
+    # get a drawing context
+    d = ImageDraw.Draw( txt )
+
+    # draw text, half opacity
+    d.text( (110 + w, 130), model, font = fnt, fill = (0, 0, 0, 255) )
+    # draw text, full opacity
+    d.text( (230, 330), size, font = fnt, fill = (0, 0, 0, 255) )
+
+    d.text( (550, 570), gtin, font = fnt1, fill = (0, 0, 0, 255) )
+    d.text( (650, 670), serial, font = fnt1, fill = (0, 0, 0, 255) )
+
+    img = Image.alpha_composite( img, txt )
+
+#    draw.font_size = 110
+#    draw.text( 320 - w, 240, model )
+#    draw.text( 250, 420, size )
+#    draw.font_size = 70
+
+
+
+#     draw.font_size = 50
+#     draw.text( 580, 630, gtin )
+#     draw.text( 680, 720, serial )
+#
+#     draw( img )
     now = datetime.datetime.now()
     name = "./images/m%s_s%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
                                                         now.month, now.day, now.hour,
                                                         now.minute, now.second )
-    img.save( filename = name )
-    dmCode.save( filename = "dout.png" )
+    img.save(name)
+    dmCode.save("dout.png")
     
 # Reading text information
 # num = int( input( "Количество->" ) )
@@ -114,11 +131,11 @@ gtin = data[1]
 serial = data[2]
 """
 
-images = convert_from_path('.//flask_tmp.pdf', dpi = 300)
 # Reading datamatrix code
 for i in range( num ):
     print( i )
-    tmp = images[i]
-#    tmp.convert( 'png' ) 
-    tmp.crop( (310, 10, 630, 290)  )
+    tmp = convert_from_path('.//flask_tmp.pdf',
+                            dpi = 400, first_page = i + 1 , last_page = i + 1)[0]
+    tmp = tmp.crop( (420, 15, 800, 395)  )
+    tmp.save('tmp_image.png')
     generateSticker( all[i][0], all[i][1], "(01)" + all[i][2] + "(21)",  all[i][3], tmp )

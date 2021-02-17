@@ -7,8 +7,8 @@ app = Flask(__name__)
 
 
 def transform():
-    os.system("rm archive.rar")
-    os.system("rm images/*.png")
+    os.system("rm -f archive.rar")
+    os.system("rm -f images/*.png")
     os.system("./make_stickers.py")
     os.system("rar a archive.rar images/*.png")
     # return text_file_contents.replace("=", ",")
