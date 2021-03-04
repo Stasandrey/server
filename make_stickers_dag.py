@@ -12,7 +12,7 @@ from PyPDF2 import PdfFileReader
 import os
 import datetime
 
-dm = "dmcode_ns.png"
+dm = "dmcode_dag.png"
 
 
 def generateSticker(model, size, gtin, serial, dmC):
@@ -67,13 +67,13 @@ def generateSticker(model, size, gtin, serial, dmC):
 #
 #     draw( img )
     now = datetime.datetime.now()
-    name = "./images_ns/m%s_s%s_%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
+    name = "./images_dag/m%s_s%s_%s_%s_%s_%s_%s_%s_%s.png" % ( model, size, now.year,
                                                            now.month, now.day, now.hour,
                                                            now.minute, now.second,
                                                            now.microsecond )
     print(name)
     img.save(name)
-    dmCode.save("dout_ns.png")
+    dmCode.save("dout_dag.png")
     
 # Reading text information
 # num = int( input( "Количество->" ) )
@@ -81,19 +81,19 @@ def generateSticker(model, size, gtin, serial, dmC):
 # Подсчет количества страниц в PDF файле
 
 
-name = "./flask_tmp_ns.pdf"
+name = "./flask_tmp_dag.pdf"
 with open(name, 'rb') as f:
     pdf = PdfFileReader(name)
     num = pdf.getNumPages()
 
 print( num )
 
-os.system( 'pdftotext -enc UTF-8 -eol dos %s tmp_pdf_ns.txt' % ( name ) )
+os.system( 'pdftotext -enc UTF-8 -eol dos %s tmp_pdf_dag.txt' % ( name ) )
 # os.system( 'pdf2txt %s > tmp_pdf.txt'%( name ) )
-with open( "tmp_pdf_ns.txt", "rt" ) as f_in:
+with open( "tmp_pdf_dag.txt", "rt" ) as f_in:
     res = f_in.readlines()
 data = []
-index = -1
+index = 0
 
 f = 0
 all = []
@@ -101,35 +101,28 @@ now = []
 c = ''
 print(res)
 for item in res:
-    index = index + 1
+
     print(item, index, now)
-    if index == 9:
+    if index == 0:
+        now.append(item.rstrip('\n').lstrip('\x0c'))
+    if index == 1:
+        now.append(item.rstrip('\n')[3:5])
+    if index == 2:
+        now.append(item.rstrip('\n'))
+    if index == 4:
+        if len(item) > 28:
+            it = item.rstrip('\n')
+            now.append(it[22:len(it)])
+    if index == 5:
+        if item != '\n':
+            now.append(item.rstrip('\n'))
+        else:
+            index = 6
+    if index == 6:
         all.append(now)
         now = []
         index = -1
-    if (index == 0) or (index == 1) or (index == 3) or (index == 4) or (index == 6):
-        index == index + 1
-
-    if index == 2:
-        now.append(item[7:len(item)].rstrip('\n'))
-    if index == 5:
-        now.append(item.rstrip('\n'))
-    if index == 7:
-        c = item.rstrip('\n')
-    if index == 8:
-        if len(c) > 28:
-            now.append( c[ 2:16 ] )
-            now.append( c[ 18:len( c ) ] )
-            c = ''
-
-            all.append( now )
-            now = [ ]
-            index = -1
-        else:
-            c = c + item.rstrip('\n')
-            now.append(c[2:16])
-            now.append(c[18:len(c)])
-            c = ''
+    index = index + 1
     # if item != "\n":
     #     if item[0:2] != "tm":
     #         if item[0:4] != "(01)":
@@ -171,20 +164,14 @@ serial = data[2]
 
 # Reading datamatrix code
 page = 0
-if num > 0:
-    tmp_res = convert_from_path( './/flask_tmp_ns.pdf',
-                                 dpi = 400, first_page = page + 1, last_page = page + 1 )[
-        0 ]
+
 num = len(all)
 for i in range( num ):
-    with open('num_ns.txt', 'wt') as f:
+    with open('num_dag.txt', 'wt') as f:
         f.write('%s'%(i))
     print( i, all[i][3] )
-    if i // 8 > page:
-        page = page + 1
-
-        tmp_res = convert_from_path('.//flask_tmp_ns.pdf',
-                                    dpi = 400, first_page = page + 1 , last_page = page + 1)[0]
+    tmp_res = convert_from_path('.//flask_tmp_dag.pdf',
+                                dpi = 400, first_page = i + 1 , last_page = i + 1)[0]
     tmp = tmp_res
     koord = [[15,420],
              [580,980],
@@ -196,8 +183,8 @@ for i in range( num ):
              [3950,4350]]
 
     tmp = tmp_res
-    tmp1 = tmp.crop( (500, koord[i%8][0], 900, koord[i%8][1]) )
-    tmp1.save( 'tmp_image_ns.png' )
+    tmp1 = tmp.crop( (470, 50, 900, 450) )
+    tmp1.save( 'tmp_image_dag.png' )
     generateSticker( all[ i ][ 0 ], all[ i ][ 1 ],
                      "(01)" + all[ i ][ 2 ] + "(21)",
                      all[ i ][ 3 ], tmp1 )
