@@ -19,7 +19,7 @@ def main_page():
                 <title>Выберите тип формируемых этикеток:</title>
              </head>
              <body>
-              <h1><b>Ознакомительный период истекает 15.03.2021 </b></h1>             
+              <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>             
               <p>Выберите тип этикеток</p>
               <p><a href="/ds">Давальческое сырье</a></p>
               <p><a href="/ns">Собственное сырье</a></p>
@@ -40,6 +40,7 @@ def form_dag():
     res_get = """
             <html>
                 <body>
+                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_dag" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -50,6 +51,7 @@ def form_dag():
     res_ok =  """
         <html>
             <body>
+                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                 <h1>Преобразование этикеток с кодами маркировки ИП Шаяхметов.</h1>
                 <form action="/transform_dag" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
@@ -138,6 +140,7 @@ def form_ns():
     res_get = """
             <html>
                 <body>
+                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_ns" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -148,6 +151,7 @@ def form_ns():
     res_ok =  """
         <html>
             <body>
+                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                 <h1>Преобразование этикеток с кодами маркировки собственного сырья.</h1>
                 <form action="/transform_ns" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
@@ -238,6 +242,7 @@ def form_ds():
     res_get = """
             <html>
                 <body>
+                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_ds" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -248,6 +253,7 @@ def form_ds():
     res_ok =  """
         <html>
             <body>
+                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
                 <h1>Преобразование этикеток с кодами маркировки давальческого сырья.</h1>
                 <form action="/transform_ds" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
