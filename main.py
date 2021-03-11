@@ -19,6 +19,7 @@ def main_page():
                 <title>Выберите тип формируемых этикеток:</title>
              </head>
              <body>
+              <h1><b>Ознакомительный период истекает 15.03.2021 </b></h1>             
               <p>Выберите тип этикеток</p>
               <p><a href="/ds">Давальческое сырье</a></p>
               <p><a href="/ns">Собственное сырье</a></p>
@@ -83,7 +84,7 @@ def transform_dag():
         f.write( '0' )
 
     os.system("rm -f archive_dag.zip")
-    os.system("rm -f images_dagf/*.png")
+    os.system("rm -f images_dag/*.png")
     os.system("./make_stickers_dag.py")
     os.system("zip -r archive_dag.zip images_dag/")
     # return text_file_contents.replace("=", ",")
