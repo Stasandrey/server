@@ -19,7 +19,7 @@ def main_page():
                 <title>Выберите тип формируемых этикеток:</title>
              </head>
              <body>
-              <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>             
+          
               <p>Выберите тип этикеток</p>
               <p><a href="/ds">Давальческое сырье</a></p>
               <p><a href="/ns">Собственное сырье</a></p>
@@ -40,7 +40,7 @@ def form_dag():
     res_get = """
             <html>
                 <body>
-                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
+
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_dag" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -51,8 +51,7 @@ def form_dag():
     res_ok =  """
         <html>
             <body>
-                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
-                <h1>Преобразование этикеток с кодами маркировки ИП Шаяхметов.</h1>
+            <h1>Преобразование этикеток с кодами маркировки ИП Шаяхметов.</h1>
                 <form action="/transform_dag" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
                     <input type="submit" />
@@ -89,7 +88,8 @@ def transform_dag():
     os.system("rm -f images_dag/*.png")
     os.system("./make_stickers_dag.py")
     os.system("zip -r archive_dag.zip images_dag/")
-    # return text_file_contents.replace("=", ",")
+    os.system("rm -f images_dag/*.png")
+# return text_file_contents.replace("=", ",")
     with open('status_dag.sts', 'wt') as f:
         f.write('2')
 
@@ -140,7 +140,7 @@ def form_ns():
     res_get = """
             <html>
                 <body>
-                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
+
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_ns" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -151,7 +151,7 @@ def form_ns():
     res_ok =  """
         <html>
             <body>
-                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
+
                 <h1>Преобразование этикеток с кодами маркировки собственного сырья.</h1>
                 <form action="/transform_ns" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
@@ -189,7 +189,8 @@ def transform_ns():
     os.system("rm -f images_ns/*.png")
     os.system("./make_stickers_ns.py")
     os.system("zip -r archive_ns.zip images_ns/")
-    # return text_file_contents.replace("=", ",")
+    os.system("rm -f images_ns/*.png")    
+# return text_file_contents.replace("=", ",")
     with open('status_ns.sts', 'wt') as f:
         f.write('2')
 
@@ -242,7 +243,7 @@ def form_ds():
     res_get = """
             <html>
                 <body>
-                    <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
+
                     <h1>Забрать отформатированные этикетки</h1>
                     <form action="/transform_ds" method="post" enctype="multipart/form-data">
                         <input type="submit" />
@@ -253,7 +254,7 @@ def form_ds():
     res_ok =  """
         <html>
             <body>
-                <h1><b>Ознакомительный период истекает 19.03.2021. Свяжитесь с разработчиком. </b></h1>
+
                 <h1>Преобразование этикеток с кодами маркировки давальческого сырья.</h1>
                 <form action="/transform_ds" method="post" enctype="multipart/form-data">
                     <input type="file" name="data_file" />
@@ -291,7 +292,8 @@ def transform_ds():
     os.system("rm -f images/*.png")
     os.system("./make_stickers_ds.py")
     os.system("zip -r archive.zip images/")
-    # return text_file_contents.replace("=", ",")
+    os.system("rm -f images/*.png")    
+# return text_file_contents.replace("=", ",")
     with open('status.sts', 'wt') as f:
         f.write('2')
 
